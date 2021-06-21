@@ -26,7 +26,6 @@ def get_same_products(hot_product):
     return same_products
         
 
-        
 def main(request):
     title = 'главная'  
     products = Product.objects.filter(is_active=True, category__is_active=True)[:3]
