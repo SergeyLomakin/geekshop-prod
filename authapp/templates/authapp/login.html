@@ -18,6 +18,11 @@
         </a>
     </button>
     <button class="btn btn-round form-control">
+        <a href="{% url 'social:begin' 'google-oauth2' %}?next=/" class="">
+            Вход через GOOGLE+
+        </a>
+    </button>
+    <button class="btn btn-round form-control">
         <a href="{% url 'auth:register' %}" class="">
             зарегистрироваться
         </a>

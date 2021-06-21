@@ -153,11 +153,13 @@ DOMAIN_NAME = 'http://localhost:8000'
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'social_core.backends.vk.VKOAuth2',
-    # 'social_auth.backends.google.GoogleOAuth2Backend',
+    'social_core.backends.google.GoogleOAuth2',
 )
 
 SOCIAL_AUTH_VK_OAUTH2_KEY = os.getenv('SOCIAL_AUTH_VK_OAUTH2_KEY')
 SOCIAL_AUTH_VK_OAUTH2_SECRET = os.getenv('SOCIAL_AUTH_VK_OAUTH2_SECRET')
 
-# SOCIAL_AUTH_VK_OAUTH2_KEY = '7884868'
-# SOCIAL_AUTH_VK_OAUTH2_SECRET = 'vAHUzLhjAuuNbRcF7l4j'
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.getenv('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.getenv('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
+
+# SOCIAL_AUTH_PIPELINE = ('social_core.pipeline.social_auth.associate_by_email',)
