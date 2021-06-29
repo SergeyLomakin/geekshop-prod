@@ -1,7 +1,9 @@
 from django.views.generic import ListView, CreateView, DeleteView, UpdateView, DetailView
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.forms import inlineformset_factory
 from django.db import transaction
+from django.shortcuts import get_object_or_404
+from django.http import HttpResponseRedirect
 
 from basketapp.models import Basket
 from ordersapp.forms import OrderItemEditForm
@@ -12,7 +14,7 @@ class OrderList(ListView):
     model = Order
 
     def get_queryset(self):
-        return Order.objects.filter(user=self.request.user)
+        return Order.objects.filter(user=self.request.user, is_active=True)
 
 
 class OrderCreate(CreateView):
@@ -61,7 +63,8 @@ class OrderCreate(CreateView):
 
 
 class OrderDelete(DeleteView):
-    pass
+    model = Order
+    success_url = reverse_lazy('order:list')
 
 
 class OrderUpdate(UpdateView):
@@ -73,22 +76,9 @@ class OrderUpdate(UpdateView):
         data = super().get_context_data(**kwargs)
         OrderFormSet = inlineformset_factory(Order, OrderItem, form=OrderItemEditForm, extra=1)
         if self.request.POST:
-            formset = OrderFormSet(self.request.POST)
+            formset = OrderFormSet(self.request.POST, instance=self.object)
         else:
-            basket_items = list(Basket.objects.filter(user=self.request.user))
-            if len(basket_items):
-                OrderFormSet = inlineformset_factory(
-                    Order,
-                    OrderItem,
-                    form=OrderItemEditForm,
-                    extra=len(basket_items)
-                )
-                formset = OrderFormSet()
-                for num, form in enumerate(formset.forms):
-                    form.initial['product'] = basket_items[num].product
-                    form.initial['quantity'] = basket_items[num].quantity
-            else:
-                formset = OrderFormSet()
+            formset = OrderFormSet(instance=self.object)
         data['orderitems'] = formset
         return data
 
@@ -97,7 +87,6 @@ class OrderUpdate(UpdateView):
         orderitems = context['orderitems']
 
         with transaction.atomic():
-            form.instance.user = self.request.user
             self.object = form.save()
             if orderitems.is_valid():
                 orderitems.instance = self.object
@@ -110,8 +99,13 @@ class OrderUpdate(UpdateView):
 
 
 class OrderRead(DetailView):
-    pass
+    model = Order
+    success_url = reverse_lazy('order_detail')
 
 
 def forming_complete(request, pk):
-    pass
+    order = get_object_or_404(Order, pk=pk)
+    order.status = Order.SENT_TO_PROCESS
+    order.save()
+
+    return HttpResponseRedirect(reverse('order:list'))
