@@ -1,6 +1,9 @@
 from django.views.generic import ListView, CreateView, DeleteView, UpdateView, DetailView
+from django.urls import reverse_lazy
+from django.forms import inlineformset_factory
 
-from ordersapp.models import Order
+from ordersapp.forms import OrderItemEditForm
+from ordersapp.models import Order, OrderItem
 
 
 class OrderList(ListView):
@@ -11,7 +14,19 @@ class OrderList(ListView):
 
 
 class OrderCreate(CreateView):
-    pass
+    model = Order
+    success_url = reverse_lazy('order:list')
+    fields = []
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        OrderFormSet = inlineformset_factory(Order, OrderItem, form=OrderItemEditForm, extra=1)
+        if self.request.POST:
+            formset = OrderFormSet(self.request.POST)
+        else:
+            formset = OrderFormSet()
+        data['orderitems'] = formset
+        return data
 
 
 class OrderDelete(DeleteView):
@@ -22,7 +37,7 @@ class OrderUpdate(UpdateView):
     pass
 
 
-class OrderRead(DeleteView):
+class OrderRead(DetailView):
     pass
 
 
