@@ -1,7 +1,9 @@
 from django.views.generic import ListView, CreateView, DeleteView, UpdateView, DetailView
 from django.urls import reverse_lazy
 from django.forms import inlineformset_factory
+from django.db import transaction
 
+from basketapp.models import Basket
 from ordersapp.forms import OrderItemEditForm
 from ordersapp.models import Order, OrderItem
 
@@ -24,9 +26,38 @@ class OrderCreate(CreateView):
         if self.request.POST:
             formset = OrderFormSet(self.request.POST)
         else:
-            formset = OrderFormSet()
+            basket_items = list(Basket.objects.filter(user=self.request.user))
+            if len(basket_items):
+                OrderFormSet = inlineformset_factory(
+                    Order,
+                    OrderItem,
+                    form=OrderItemEditForm,
+                    extra=len(basket_items)
+                )
+                formset = OrderFormSet()
+                for num, form in enumerate(formset.forms):
+                    form.initial['product'] = basket_items[num].product
+                    form.initial['quantity'] = basket_items[num].quantity
+            else:
+                formset = OrderFormSet()
         data['orderitems'] = formset
         return data
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        orderitems = context['orderitems']
+
+        with transaction.atomic():
+            form.instance.user = self.request.user
+            self.object = form.save()
+            if orderitems.is_valid():
+                orderitems.instance = self.object
+                orderitems.save()
+
+        if self.object._get_total_cost() == 0:
+            self.object.delete()
+
+        return super().form_valid(form)
 
 
 class OrderDelete(DeleteView):
@@ -34,7 +65,48 @@ class OrderDelete(DeleteView):
 
 
 class OrderUpdate(UpdateView):
-    pass
+    model = Order
+    success_url = reverse_lazy('order:list')
+    fields = []
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        OrderFormSet = inlineformset_factory(Order, OrderItem, form=OrderItemEditForm, extra=1)
+        if self.request.POST:
+            formset = OrderFormSet(self.request.POST)
+        else:
+            basket_items = list(Basket.objects.filter(user=self.request.user))
+            if len(basket_items):
+                OrderFormSet = inlineformset_factory(
+                    Order,
+                    OrderItem,
+                    form=OrderItemEditForm,
+                    extra=len(basket_items)
+                )
+                formset = OrderFormSet()
+                for num, form in enumerate(formset.forms):
+                    form.initial['product'] = basket_items[num].product
+                    form.initial['quantity'] = basket_items[num].quantity
+            else:
+                formset = OrderFormSet()
+        data['orderitems'] = formset
+        return data
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        orderitems = context['orderitems']
+
+        with transaction.atomic():
+            form.instance.user = self.request.user
+            self.object = form.save()
+            if orderitems.is_valid():
+                orderitems.instance = self.object
+                orderitems.save()
+
+        if self.object._get_total_cost() == 0:
+            self.object.delete()
+
+        return super().form_valid(form)
 
 
 class OrderRead(DetailView):
