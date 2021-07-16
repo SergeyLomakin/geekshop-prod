@@ -212,7 +212,7 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.user.user_details',
 )
 
-DOMAIN_NAME = 'http://localhost:8000'
+DOMAIN_NAME = 'http://194.67.91.40'
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
