@@ -12,7 +12,6 @@ class Basket(models.Model):
     add_datetime = models.DateTimeField(verbose_name='время добавления', auto_now_add=True)
     
 
-    @cached_property
     def _get_product_cost(self):
         "return cost of all products this type"
         return self.product.price * self.quantity
@@ -37,6 +36,7 @@ class Basket(models.Model):
         
     total_cost = property(_get_total_cost)
 
+    @cached_property
     @staticmethod
     def get_item(pk):
         return Basket.objects.get(pk=pk)
