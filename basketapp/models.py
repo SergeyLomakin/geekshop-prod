@@ -19,7 +19,6 @@ class Basket(models.Model):
     product_cost = property(_get_product_cost)
 
 
-    @cached_property
     def _get_total_quantity(self):
         "return total quantity for user"
         _items = Basket.objects.filter(user=self.user)
@@ -27,8 +26,9 @@ class Basket(models.Model):
         return _totalquantity
         
     total_quantity = property(_get_total_quantity)
-    
-    
+
+
+    @cached_property
     def _get_total_cost(self):
         "return total cost for user"
         _items = Basket.objects.filter(user=self.user)
