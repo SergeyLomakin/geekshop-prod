@@ -1,1 +1,1 @@
-http://194.67.91.40/basket/
+http://194.67.91.40/order/update/1
