@@ -1,7 +1,6 @@
 from django.db import models
 from django.conf import settings
 
-from django.utils.functional import cached_property
 from mainapp.models import Product
 
 
@@ -28,7 +27,6 @@ class Basket(models.Model):
     total_quantity = property(_get_total_quantity)
 
 
-    @cached_property
     def _get_total_cost(self):
         "return total cost for user"
         _items = Basket.objects.filter(user=self.user)
