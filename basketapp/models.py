@@ -1,7 +1,7 @@
 from django.db import models
 from django.conf import settings
 
-from functools import cached_property
+from django.utils.functional import cached_property
 from mainapp.models import Product
 
 
