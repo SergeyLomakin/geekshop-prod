@@ -11,12 +11,13 @@ class Basket(models.Model):
     quantity = models.PositiveIntegerField(verbose_name='количество', default=0)
     add_datetime = models.DateTimeField(verbose_name='время добавления', auto_now_add=True)
     
-    
+
+    @cached_property
     def _get_product_cost(self):
         "return cost of all products this type"
         return self.product.price * self.quantity
     
-    product_cost = property(_get_product_cost)
+    # product_cost = property(_get_product_cost)
 
 
     def _get_total_quantity(self):
@@ -36,7 +37,6 @@ class Basket(models.Model):
         
     total_cost = property(_get_total_cost)
 
-    @cached_property
     @staticmethod
     def get_item(pk):
         return Basket.objects.get(pk=pk)
