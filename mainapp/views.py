@@ -64,6 +64,7 @@ def main(request):
     return render(request, 'mainapp/index.html', content)
     
 
+@cache_page(3600)
 def products(request, pk=None, page=1):   
     title = 'продукты'
     # links_menu = ProductCategory.objects.filter(is_active=True)
@@ -109,7 +110,6 @@ def products(request, pk=None, page=1):
     return render(request, 'mainapp/products.html', content)
 
 
-@cache_page(3600)
 def product(request, pk):
     title = 'продукты'
     # links_menu = ProductCategory.objects.filter(is_active=True)
