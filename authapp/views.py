@@ -12,6 +12,9 @@ from authapp.models import ShopUser
 
 
 def login(request):
+    if request.user.is_authenticated:
+        return HttpResponseRedirect(reverse('main'))
+
     title = 'вход'
     
     login_form = ShopUserLoginForm(data=request.POST or None)
