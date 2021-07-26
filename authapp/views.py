@@ -25,7 +25,7 @@ def login(request):
     if request.method == 'POST' and login_form.is_valid():
         username = request.POST['username']
         password = request.POST['password']
-        
+
         user = auth.authenticate(username=username, password=password)
         if user and user.is_active:
             auth.login(request, user)
@@ -100,5 +100,5 @@ def verify(request, email, key):
         user.activation_key = ''
         user.activation_key_created = None
         user.save()
-        auth.login(request, user)
+        auth.login(request, user, backend='django.contrib.auth.backends.ModelBackend')
     return render(request, 'authapp/verify.html')
