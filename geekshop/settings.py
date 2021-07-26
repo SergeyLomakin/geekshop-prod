@@ -229,15 +229,15 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.getenv('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
 # SOCIAL_AUTH_PIPELINE = ('social_core.pipeline.social_auth.associate_by_email',)
 
 # if os.name == 'posix':
-CACHE_MIDDLEWARE_ALIAS = 'default'
-CACHE_MIDDLEWARE_SECONDS = 120
-CACHE_MIDDLEWARE_KEY_PREFIX = 'geekbrains'
-
-CACHES = {
-   'default': {
-       'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-       'LOCATION': '127.0.0.1:11211',
-   }
-}
-
-LOW_CACHE = True
+# CACHE_MIDDLEWARE_ALIAS = 'default'
+# CACHE_MIDDLEWARE_SECONDS = 120
+# CACHE_MIDDLEWARE_KEY_PREFIX = 'geekbrains'
+#
+# CACHES = {
+#    'default': {
+#        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+#        'LOCATION': '127.0.0.1:11211',
+#    }
+# }
+#
+# LOW_CACHE = True

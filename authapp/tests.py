@@ -31,7 +31,6 @@ class UserManagementTestCase(TestCase):
     #     self._test_user_register()
     # update 40 self.client.login(username=self.new_user_data['username'], password=self.new_user_data['password'])
 
-
     def _test_login(self):
         response = self.client.get('/')
         self.assertEqual(response.status_code, self.status_code_success)
